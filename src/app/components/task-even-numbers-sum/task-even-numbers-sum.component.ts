@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskTextComponent } from '../task-text/task-text.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-task-even-numbers-sum',
   standalone: true,
-  imports: [CommonModule, TaskTextComponent],
+  imports: [CommonModule, TaskTextComponent, FormsModule],
   templateUrl: './task-even-numbers-sum.component.html',
   styleUrl: './task-even-numbers-sum.component.css'
 })
@@ -23,6 +24,8 @@ export class TaskEvenNumbersSumComponent implements OnInit {
   selectedArrays: number[][] = [];
   numOfTargetArrays: number = 0;
   newMessageAnimation: boolean = false;
+  userMessage!: string;
+  helpTimeout: any;
 
   constructor(private router: Router) {
     const state = this.router.getCurrentNavigation()?.extras.state;
@@ -36,6 +39,7 @@ export class TaskEvenNumbersSumComponent implements OnInit {
     this.step2Text = "Sada odredi sve nizove čiji je zbir manji od broja 58."
     this.generateRandomNumbers();
     this.generateRandomArray();
+    this.offerHelp(8000);
   }
 
   generateRandomNumbers() {
@@ -163,10 +167,57 @@ export class TaskEvenNumbersSumComponent implements OnInit {
     return false;
   }
 
+  offerHelp(ms: number) {
+    this.helpTimeout = setTimeout(() => {
+      this.step1Text = "Da li ti je potrebna pomoć?";
+
+      if (this.step2) {
+        this.step2Text = "Da li ti je potrebna pomoć?";
+      }
+    }, ms);
+  }
+
   nextStep() {
     this.step2 = true;
     this.validSelection = false;
     this.newMessageAnimation = true;
+
+    if(this.helpTimeout) {
+      clearTimeout(this.helpTimeout);
+    }
+    this.offerHelp(10000);
+  }
+
+  sendMessage() {
+    const lowerCaseUserMessage = this.userMessage.toLowerCase();
+
+    const positiveKeywords = ['da', 'jeste', 'naravno', 'moze', 'može', 'svakako', 'sigurno', 'pomoć', 'pomoc', 'pomogni', 'treba'];
+    const negativeKeywords = ['ne', 'nemam', 'nije', 'ne želim', 'necu', 'neću'];
+
+    const isPositive = positiveKeywords.some(keyword => lowerCaseUserMessage.includes(keyword));
+    const isNegative = negativeKeywords.some(keyword => lowerCaseUserMessage.includes(keyword));
+
+    // Pomoc za odredjivanje parnih brojeva
+    if (isPositive) {
+      this.step1Text = 'Parni brojevi su oni brojevi koji daju ostatak 0 pri deljenju sa 2 (npr. 2, 4, 6...).';
+    } else if (isNegative) {
+      this.step1Text = 'U redu! Možeš nastaviti sa traženjem parnih brojeva!'
+    } else {
+      this.step1Text = 'Nisam siguran kako vam mogu pomoći.';
+    }
+
+    // Pomoc za odredjivanje sume brojeva
+    if (this.step2) {
+      if (isPositive) {
+        this.step2Text = 'Potrebno je da uzimaš element po element iz niza i računaš zbir svih elemenata koje si trenutno uzeo. Ukoliko taj zbir bude jednak ili veći od 58, odmah možeš eliminisati taj niz. Ukoliko si prošao sve elemente iz niza i zbir je manji od 58, to znači da je to niz koji treba da izabereš!';
+      } else if (isNegative) {
+        this.step2Text = 'U redu! Možeš nastaviti sa traženjem nizova čiji je zbir elemenata manji od 58!'
+      } else {
+        this.step2Text = 'Nisam siguran kako vam mogu pomoći.';
+      }
+    }
+
+    this.userMessage = '';
   }
 
 }
