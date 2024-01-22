@@ -1,0 +1,21 @@
+<div class="home">
+  <!-- Sadrzaj za prikaz zadatka -->
+  <app-task-text [showTask]="showTask" [taskText]="taskText"> </app-task-text>
+
+  <div class="owl animate__animated animate__backInDown">
+    <img src="assets/images/owl-happy.gif" alt="owl-happy GIF" />
+    <!-- Sadrzaj pri otvaranju pocetne stranice -->
+    <div *ngIf="!showTask" class="tag-cloud">Tekst</div>
+    <!-- Sadrzaj za prikaz zadatka -->
+    <div *ngIf="showTask" class="tag-cloud">
+      Ovo je tvoj zadatak kojim ćeš uvežbati osnovne programerske sposobnosti!
+      Da li si spreman?!
+    </div>
+  </div>
+
+  <div class="bottom">
+    <button class="action-button" (click)="onNextButtonClick()">
+      <span>Dalje</span>
+    </button>
+  </div>
+</div>

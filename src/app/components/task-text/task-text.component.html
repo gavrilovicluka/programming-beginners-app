@@ -1,0 +1,12 @@
+<div
+  class="animate__animated"
+  [ngClass]="{ animate__backInLeft: showTask }"
+  style="display: flex; justify-content: start"
+>
+  <div *ngIf="showTask" class="task-box">
+    <h3 class="task-title"> Zadatak </h3>
+    <p class="task-text">
+      {{ this.taskText }}
+    </p>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="container">
+  <app-task-text [showTask]="true" [taskText]="taskText"></app-task-text>
+
+  <div class="main-content">
+    <div class="owl animate__animated animate__backInDown">
+      <img src="assets/images/owl-happy.gif" alt="owl-happy GIF" />
+      <div *ngIf="!step2" class="tag-cloud">
+        {{ step1Text }}
+      </div>
+      <div *ngIf="step2" class="tag-cloud" [ngClass]="{ animate__bounceIn: newMessageAnimation }">
+        {{ step2Text }}
+      </div>
+    </div>
+
+    <div *ngIf="!step2" class="numbers-wrapper">
+      <div class="numbers-container">
+        <div
+          *ngFor="let num of numbers"
+          class="number animate__animated"
+          [class.selected]="selectedNumbers.includes(num)"
+          [ngClass]="{
+            animate__headShake: num % 2 !== 0 && selectedNumbers.includes(num)
+          }"
+          (click)="selectNumber(num)"
+        >
+          {{ num }}
+        </div>
+      </div>
+    </div>
+    <div *ngIf="step2" class="numbers-wrapper">
+      <div class="numbers-container">
+        <div
+          *ngFor="let arr of numberArrays; let i = index"
+          class="number animate__animated"
+          [class.selected]="this.isSelectedArray(arr)"
+          (click)="selectArray(arr)"
+        >
+          {{ arr.join(', ') }}  
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom">
+    <button
+      [disabled]="!validSelection"
+      class="action-button"
+      (click)="nextStep()"
+    >
+      <span>Dalje</span>
+    </button>
+  </div>
+</div>
