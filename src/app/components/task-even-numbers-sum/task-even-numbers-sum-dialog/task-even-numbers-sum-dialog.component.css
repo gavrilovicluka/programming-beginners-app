@@ -1,0 +1,55 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button:disabled {
+  background-color: #b1b1b1;
+  color: black;
+  cursor: not-allowed;
+}
+
+.message-text {
+  padding: 10px;
+}
+
+#message-form {
+  display: flex;
+}
+
+#message-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #8e8e8e;
+  border-radius: 5px 0 0 5px;
+  justify-content: space-between;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  row-gap: 10px;
+}
+
+button[type="submit"] {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  height: 37px;
+}
+
+.prompt {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.button {
+  position: absolute;
+  right: 0px;
+}

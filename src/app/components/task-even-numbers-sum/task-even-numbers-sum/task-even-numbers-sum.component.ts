@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TaskTextComponent } from '../task-text/task-text.component';
+import { TaskTextComponent } from '../../task-text/task-text.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -111,7 +111,7 @@ export class TaskEvenNumbersSumComponent implements OnInit {
       this.numberArrays.pop();
       const newArray: number[] = [];
       for (let j = 0; j < 4; j++) {
-        newArray.push(this.generateRandomNumber(1, 20));
+        newArray.push(this.generateRandomNumber(1, 15));
       }
       this.numberArrays.push(newArray);
     }
@@ -178,6 +178,11 @@ export class TaskEvenNumbersSumComponent implements OnInit {
   }
 
   nextStep() {
+    if(this.step2) {
+      this.router.navigateByUrl('/even-numbers-sum-dialog', {
+        state: { taskText: this.taskText }
+      });
+    }
     this.step2 = true;
     this.validSelection = false;
     this.newMessageAnimation = true;

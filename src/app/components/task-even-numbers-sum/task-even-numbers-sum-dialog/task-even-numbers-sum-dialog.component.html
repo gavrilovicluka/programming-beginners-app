@@ -1,0 +1,31 @@
+<div class="container">
+  <app-task-text [showTask]="true" [taskText]="taskText"></app-task-text>
+  <div class="owl animate__animated animate__backInDown">
+    <img src="assets/images/owl-happy.gif" alt="owl-happy GIF" />
+    <div class="tag-cloud" [innerHTML]="text"></div>
+  </div>
+
+  <div class="bottom">
+    <div class="prompt">
+      <form id="message-form">
+        <div class="form-input">
+          <input
+            [disabled]="disableInput"
+            type="text"
+            name="userMessage"
+            id="message-input"
+            placeholder="Napišite poruku..."
+            [(ngModel)]="userMessage"
+          />
+        </div>
+        <button type="submit" (click)="sendMessage()">Pošalji</button>
+      </form>
+    </div>
+
+    <div class="button">
+      <button class="action-button" (click)="goHome()">
+        <span>Početak</span>
+      </button>
+    </div>
+  </div>
+</div>
