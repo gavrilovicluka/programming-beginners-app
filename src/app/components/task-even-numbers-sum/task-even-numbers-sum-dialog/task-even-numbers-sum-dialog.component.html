@@ -1,7 +1,7 @@
 <div class="container">
   <app-task-text [showTask]="true" [taskText]="taskText"></app-task-text>
   <div class="owl animate__animated animate__backInDown">
-    <img src="assets/images/owl-happy.gif" alt="owl-happy GIF" />
+    <img src={{owlImage}} alt="owl GIF" />
     <div class="tag-cloud" [innerHTML]="text"></div>
   </div>
 
@@ -18,7 +18,7 @@
             [(ngModel)]="userMessage"
           />
         </div>
-        <button type="submit" (click)="sendMessage()">Pošalji</button>
+        <button [disabled]="disableButton" type="submit" (click)="sendMessage()">Pošalji</button>
       </form>
     </div>
 

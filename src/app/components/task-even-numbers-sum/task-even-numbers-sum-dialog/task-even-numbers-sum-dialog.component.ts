@@ -15,10 +15,12 @@ export class TaskEvenNumbersSumDialogComponent {
   taskText!: string;
   userMessage: string = "";
   text!: string;
+  owlImage: string = "assets/images/owl-happy.gif";
   goalValue!: number;
   currentSum: number = 0;
   currentNumbers: number[] = [];
   disableInput: boolean = false;
+  disableButton: boolean = false;
   isFirstPartFinished: boolean = false;
   firstStepStartFlag: boolean = true;
   firstStepAnswer: boolean = false;
@@ -39,6 +41,7 @@ export class TaskEvenNumbersSumDialogComponent {
   }
 
   sendMessage() {
+    this.owlImage = "assets/images/owl-happy.gif";
     const number = this.getNumberFromText(this.userMessage);
 
     const lowerCaseUserMessage = this.userMessage.toLowerCase();
@@ -48,15 +51,18 @@ export class TaskEvenNumbersSumDialogComponent {
     const isPositive = positiveKeywords.some(keyword => lowerCaseUserMessage.includes(keyword));
     const isNegative = negativeKeywords.some(keyword => lowerCaseUserMessage.includes(keyword));
 
+    // Odgovor na pitanje da li moze da se krene sa igrom
     if (!this.isFirstPartFinished && this.firstStepStartFlag) {
       if (isPositive) {
         this.text = "Krećemo sa igrom! <br><br> Možeš da uneseš prvi broj!";
       } else {
         this.text = "Očekujem samo potvrdne odgovore! <br><br> Probaj da uneseš prvi broj, neće ništa da boli!";
       }
-    } else if (!this.isFirstPartFinished && this.firstStepAnswer) {
+    }
+    // Odgovor na pitanje da li da se menjaju uloge
+    else if (!this.isFirstPartFinished && this.firstStepAnswer) {
       if (isPositive) {
-        this.text = "Odlično! Sada možemo da promenimo uloge! Sad ti budi program, a ja ću da ti dajem brojeve.";
+        this.text = "Odlično! Možemo da promenimo uloge! Sad ti budi program, a ja ću da ti dajem brojeve.";
         this.isFirstPartFinished = true;
       } else if (isNegative) {
         this.text = "Hajmo onda ispočetka!";
@@ -65,7 +71,9 @@ export class TaskEvenNumbersSumDialogComponent {
       } else {
         this.text = "Nisam siguran šta si hteo da kažeš, napiši potvrdan ili odričan odgovor.";
       }
-    } else if (!this.isFirstPartFinished && number === -1) {
+    }
+    // Pocetnik unosi brojeve kad je u ulozi korisnika 
+    else if (!this.isFirstPartFinished && number === -1) {
       this.text = "Moraš uneti neki broj!";
       this.userMessage = "";
       return;
@@ -74,11 +82,11 @@ export class TaskEvenNumbersSumDialogComponent {
     // Pitanje da li treba ispocetka drugi deo
     if (this.secondStepAnswer) {
       if (isNegative) {
-        this.text = "Odlično! Ukoliko želiš da radiš druge zadatke, možeš da klikneš na dugme <i> Početak<i>.";
+        this.text = "Odlično! Ukoliko želiš da radiš druge zadatke, možeš da klikneš na dugme <i>Početak<i>.";
         this.userMessage = "";
         this.disableInput = true;
+        this.disableButton = true;
         return;
-        // this.isFirstPartFinished = true;
       } else if (isPositive) {
         this.text = "Hajmo onda ispočetka!";
         this.secondStepAgain = true;
@@ -91,12 +99,15 @@ export class TaskEvenNumbersSumDialogComponent {
     if (!this.firstStepStartFlag) {
       // Drugi deo - pocetnik u ulozi programa
       if (this.isFirstPartFinished) {
+        // Ako se menjaju uloge, posle 4s aplikacija salje prvi broj
         if (this.firstStepAnswer) {
           setTimeout(() => {
             this.secondPart();
           }, 4000);
           this.firstStepAnswer = false;
-        } else if (this.secondStepAnswer) {
+        }
+        // Ako pocetnik ponovo radi drugi deo, posle 4s aplikacija salje prvi broj
+        else if (this.secondStepAnswer) {
           setTimeout(() => {
             this.secondPart();
             this.disableInput = false;
@@ -105,8 +116,9 @@ export class TaskEvenNumbersSumDialogComponent {
         } else {
           this.secondPart();
         }
-      } else if (this.isEven(number)) {
-        // Prvi deo - pocetnik u ulozi korisnika
+      }
+      // Prvi deo - pocetnik u ulozi korisnika
+      else if (this.isEven(number)) {
         this.firstPart(number);
       } else {
         if (this.firstStepAgain) {
@@ -116,7 +128,8 @@ export class TaskEvenNumbersSumDialogComponent {
           }, 4000);
           this.firstStepAgain = false;
         } else {
-          this.text = "Broj koji si uneo/la nije paran. Pokušaj ponovo."
+          this.owlImage = "assets/images/owl-waiting.gif"
+          this.text = "Mislim da si malo pogrešio. Pokušaj ponovo."
         }
       }
     }
@@ -162,14 +175,8 @@ export class TaskEvenNumbersSumDialogComponent {
     let feedbackMessage = "";
     if (this.currentSum >= this.goalValue) {
       feedbackMessage = `Sada imamo ${this.currentNumbers}, što je ukupno ${this.currentSum}. To prelazi granicu od ${this.goalValue}, što znači da smo došli do kraja programa. <br><br> Da li si shvatio? `;
-      // this.disableInput = true;
 
-      // setTimeout(() => {
-      //   this.text = "Da li si spreman/a?";
-      //   this.disableInput = false;
-      // }, 8000);
       this.firstStepAnswer = true;
-
       this.currentNumbers = [];
       this.currentSum = 0;
     } else {
@@ -203,10 +210,6 @@ export class TaskEvenNumbersSumDialogComponent {
       this.currentNumbers.push(generatedNumber);
       this.secondStepStartFlag = false;
     }
-    // else if (this.secondStepStartFlag && isNegative) {
-    //   this.text = 'Ukoliko imaš nejasnoća možeš se vratiti na prethodne korake i početi zadatak ispočetka. '
-    //   this.secondStepStartFlag = false;
-    // }
     // Razmatranje mogucih odgovora korisnika
     else if (!this.secondStepStartFlag) {
       let reply: string = '';
@@ -217,21 +220,29 @@ export class TaskEvenNumbersSumDialogComponent {
       // Ako korisnik unese i trenutnu sumu
       if (usersSum !== -1 && usersSum === this.currentSum) {
         reply = `Tačno, trenutna suma je ${this.currentSum}! <br><br>`;
+      } else if (usersSum !== -1 && usersSum !== this.currentSum) {
+        reply = `Mala greška, trenutna suma nije ${usersSum}, nego ${this.currentSum}! <br><br>`;
+      }
+
+      if (!isEnd) {
+        // Ako korisnik kaze da je kraj, a nije
+        if (hasEndKeyword && !isNegative) {
+          this.owlImage = "assets/images/owl-waiting.gif";
+          reply += `Nije kraj još uvek jer je suma ${this.currentSum}! <br><br>`;
+        }
       }
 
       if (isEnd) {
         // Ako je ispunjen uslov, a korisnik nije to napisao
         if (!hasEndKeyword || (isNegative && hasEndKeyword)) {
+          this.owlImage = "assets/images/owl-waiting.gif";
           this.text = `Trebalo je da kažeš da je kraj programa jer ${this.currentSum} nije manje od ${this.goalValue}! To znači da završavamo sa unosom brojeva! <br><br> Možda nisi shvatio poentu, da li želiš ispočetka? `;
-
         }
         // Ako je ispunjen uslov i korisnik je to napisao
         else {
-          this.text = `Bravo! Zbir koji sada iznosi ${this.currentSum} nije više manji od ${this.goalValue}, što znači da si shvatio/la kada je zadatak gotov! <br><br> Čestitam!!! <br><br> Da li je potrebno da radimo ovaj deo ispočetka? `;
-
+          this.text = `Bravo! Zbir koji iznosi ${this.currentSum} sada nije manji od ${this.goalValue}, što znači da si shvatio/la kada je zadatak gotov! <br><br> Čestitam!!! <br><br> Da li je potrebno da radimo ovaj deo ispočetka? `;
         }
 
-        // this.disableInput = true;
         this.secondStepAnswer = true;
         this.secondStepStartFlag = true;
         this.currentNumbers = [];
@@ -247,15 +258,18 @@ export class TaskEvenNumbersSumDialogComponent {
         }
         // Korisnik nije napisao da je unet neparan broj
         else {
+          this.owlImage = "assets/images/owl-waiting.gif";
           reply += 'Nisi primetio/la da je broj koji je malopre unet neparan! <br><br>';
         }
       } else {
         // Korisnik odgovara da je unet neparan broj, a nije
         if (hasOddKeyword || (isNegative && hasEvenKeyword)) {
+          this.owlImage = "assets/images/owl-waiting.gif";
           reply += 'Nije bio unet neparan broj! <br><br>';
         }
         // Korisnik odgovara da nije potrebno jos zavrsiti program
         else if (isNegative || (isNegative && hasEndKeyword)) {
+          this.owlImage = "assets/images/owl-approving.gif";
           reply += 'Tako je, još uvek nije potrebno završiti program! <br><br>';
         }
       }
@@ -263,11 +277,13 @@ export class TaskEvenNumbersSumDialogComponent {
       this.text = reply + `Naredni broj koji unosim je: ${generatedNumber}. Brojevi koji su uneti su: ${this.currentNumbers}. <br><br> Koja je sada suma i da li treba zavrsiti program? `
 
       this.currentNumbers.push(generatedNumber);
-      if (this.isEven(generatedNumber)) {
-        this.currentSum += generatedNumber;
-      }
     } else {
+      this.owlImage = "assets/images/owl-waiting.gif";
       this.text = 'Nisam siguran kako vam mogu pomoći.';
+    }
+
+    if (this.isEven(generatedNumber)) {
+      this.currentSum += generatedNumber;
     }
   }
 
